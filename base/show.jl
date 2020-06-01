@@ -564,7 +564,6 @@ function make_typealias(x::Type)
                         for p in xenv
                             applied = rewrap_unionall(applied, p)
                         end
-                        applied = rewrap_unionall(applied, alias)
                         has_free_typevars(applied) && continue
                         applied == x || continue # it couldn't figure out the parameter matching
                     elseif alias <: x
@@ -646,7 +645,6 @@ function make_typealiases(x::Type)
                     for p in xenv
                         applied = rewrap_unionall(applied, p)
                     end
-                    applied = rewrap_unionall(applied, alias)
                     has_free_typevars(applied) && continue
                     applied <: x || continue # parameter matching didn't make a subtype
                     print_without_params(x) && (env = Core.svec())
