@@ -582,7 +582,16 @@ function make_typealias(x::Type)
 end
 
 function show_typealias(io::IO, name::GlobalRef, x::Type, env::SimpleVector)
-    # print(x.mod)
+    if !(get(io, :compact, false)::Bool)
+        # Print module prefix unless alias is visible from module passed to
+        # IOContext. If :module is not set, default to Main. nothing can be used
+        # to force printing prefix.
+        from = get(io, :module, Main)
+        if (from === nothing || !isvisible(name.name, name.mod, from))
+            show(io, name.mod)
+            print(io, ".")
+        end
+    end
     print(io, name.name)
     n = length(env)
     n == 0 && return
