@@ -1171,7 +1171,7 @@ julia> a = [4, 3, 2, 1]; popat!(a, 2)
 3
 
 julia> a
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  4
  2
  1
@@ -1180,7 +1180,7 @@ julia> popat!(a, 4, missing)
 missing
 
 julia> popat!(a, 4)
-ERROR: BoundsError: attempt to access 3-element Array{Int64,1} at index [4]
+ERROR: BoundsError: attempt to access 3-element Vector{Int64} at index [4]
 [...]
 ```
 """

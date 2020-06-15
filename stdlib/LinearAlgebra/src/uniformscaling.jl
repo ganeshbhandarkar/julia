@@ -31,7 +31,7 @@ julia> J*A
  6.0  8.0
 
 julia> J[1:2, 1:2]
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  2.0  0.0
  0.0  2.0
 ```
