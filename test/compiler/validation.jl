@@ -50,7 +50,7 @@ end
     c.code[1] = Expr(:(=), SlotNumber(2), GotoNode(1))
     c.code[2] = Expr(:(=), SlotNumber(2), LineNumberNode(2))
     i = 2
-    for h in (:gotoifnot, :line, :const, :meta)
+    for h in (:line, :const, :meta)
         c.code[i+=1] = Expr(:(=), SlotNumber(2), Expr(h))
     end
     errors = Core.Compiler.validate_code(c)
@@ -64,7 +64,7 @@ end
     c.code[2] = Expr(:call, GlobalRef(Base,:-), Expr(:call, GlobalRef(Base,:sin), GotoNode(2)), 3)
     c.code[3] = Expr(:call, LineNumberNode(2))
     i = 3
-    for h in (:gotoifnot, :line, :const, :meta)
+    for h in (:line, :const, :meta)
         c.code[i+=1] = Expr(:call, GlobalRef(@__MODULE__,:f), Expr(h))
     end
     errors = Core.Compiler.validate_code(c)

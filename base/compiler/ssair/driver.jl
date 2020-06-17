@@ -21,11 +21,7 @@ include("compiler/ssair/legacy.jl")
 #@isdefined(Base) && include("compiler/ssair/show.jl")
 
 function normalize_expr(stmt::Expr)
-    if stmt.head === :gotoifnot
-        return GotoIfNot(stmt.args[1], stmt.args[2]::Int)
-    elseif stmt.head === :return
-        return (length(stmt.args) == 0) ? ReturnNode(nothing) : ReturnNode(stmt.args[1])
-    elseif stmt.head === :unreachable
+    if stmt.head === :unreachable
         return ReturnNode()
     else
         return stmt

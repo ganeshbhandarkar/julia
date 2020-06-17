@@ -555,10 +555,15 @@ static jl_value_t *scm_to_julia_(fl_context_t *fl_ctx, value_t e, jl_module_t *m
             JL_GC_POP();
             return temp;
         }
-        JL_GC_PUSH1(&ex);
+        JL_GC_PUSH2(&ex, &temp);
         if (sym == goto_sym) {
             ex = scm_to_julia_(fl_ctx, car_(e), mod);
             temp = jl_new_struct(jl_gotonode_type, ex);
+        }
+        else if (sym == goto_ifnot_sym) {
+            ex = scm_to_julia_(fl_ctx, car_(e), mod);
+            temp = scm_to_julia(fl_ctx, car_(cdr_(e)), mod);
+            temp = jl_new_struct(jl_gotoifnot_type, ex, temp);
         }
         else if (sym == newvar_sym) {
             ex = scm_to_julia_(fl_ctx, car_(e), mod);

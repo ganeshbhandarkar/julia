@@ -20,14 +20,6 @@ function inflate_ir(ci::CodeInfo, sptypes::Vector{Any}, argtypes::Vector{Any})
     cfg = compute_basic_blocks(code)
     for i = 1:length(code)
         stmt = code[i]
-        urs = userefs(stmt)
-        for op in urs
-            val = op[]
-            if isa(val, SlotNumber)
-                op[] = Argument(val.id)
-            end
-        end
-        stmt = urs[]
         # Translate statement edges to bb_edges
         if isa(stmt, GotoNode)
             code[i] = GotoNode(block_for_inst(cfg, stmt.label))
@@ -67,24 +59,14 @@ function replace_code_newstyle!(ci::CodeInfo, ir::IRCode, nargs::Int)
     # (and undo normalization for now)
     for i = 1:length(ci.code)
         stmt = ci.code[i]
-        urs = userefs(stmt)
-        for op in urs
-            val = op[]
-            if isa(val, Argument)
-                op[] = SlotNumber(val.n)
-            end
-        end
-        stmt = urs[]
         if isa(stmt, GotoNode)
             stmt = GotoNode(first(ir.cfg.blocks[stmt.label].stmts))
         elseif isa(stmt, GotoIfNot)
-            stmt = Expr(:gotoifnot, stmt.cond, first(ir.cfg.blocks[stmt.dest].stmts))
+            stmt = GotoIfNot(stmt.cond, first(ir.cfg.blocks[stmt.dest].stmts))
         elseif isa(stmt, PhiNode)
             stmt = PhiNode(Any[last(ir.cfg.blocks[edge::Int].stmts) for edge in stmt.edges], stmt.values)
         elseif isa(stmt, ReturnNode)
-            if isdefined(stmt, :val)
-                stmt = Expr(:return, stmt.val)
-            else
+            if !isdefined(stmt, :val)
                 stmt = Expr(:unreachable)
             end
         elseif isa(stmt, Expr) && stmt.head === :enter
